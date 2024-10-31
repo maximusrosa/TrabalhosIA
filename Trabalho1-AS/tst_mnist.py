@@ -1,6 +1,7 @@
 import tensorflow as tf
 from tensorflow import keras
 import matplotlib.pyplot as plt
+import time
 
 # Carregar o conjunto de dados MNIST
 mnist = keras.datasets.mnist
@@ -42,46 +43,35 @@ test_labels = tf.keras.utils.to_categorical(test_labels, num_classes=num_classes
 
 # Crie o modelo de rede neural convolucional simples
 def get_mnist_network():
-    # Atributos
-    # Camada convolucional:
-    num_filtros = 32
-    tam_filtro = 3
-    x_stride = 1
-    y_stride = 1
+    num_filtros = 16
+    dim_filtro = 3
 
     # Max Pooling:
-    tam_pooling = 2
+    dim_mat_max_pooling = 2
 
-    # Testar
-    # - stride igual ao tamanho do filtro (sem overlap)
-    # - stride maior que o tamanho do filtro (overlap)
-    # - maior tamanho da "área" de pooling (menos informação)
+    model = tf.keras.models.Sequential([
+        tf.keras.layers.Conv2D(num_filtros, (dim_filtro, dim_filtro), activation='relu', input_shape=(28, 28, 1)),
+        # 1 camada de convolução: 16 filtros 3x3, stride padrão (1,1), ativação relu
+        tf.keras.layers.MaxPool2D((dim_mat_max_pooling, dim_mat_max_pooling), ),  # max pooling 2x2
+        tf.keras.layers.Flatten(),  # achatar p/ se ajustar à MLP
 
-    model = keras.Sequential([
-        # Camada convolucional 32 filtros 3x3.
-        # Podemos mudar quantidade de filtros, tamanho do filtro é geralmente 3x3, o "stride" pode ser aumentado para agilizar a execução.
-        tf.keras.layers.Conv2D(num_filtros, (tam_filtro, tam_filtro), strides=(x_stride, y_stride), activation='relu',
-                               input_shape=(32, 32, 3)),
-        #(32, 32, 3) porque as imagens são 32X32 e RGB, portanto, tendo 3 canais de cor
-
-        # Max Pooling 2x2.
-        # Podemos aumentar tamanho para agilizar execução, mas perdemos precisão.
-        tf.keras.layers.MaxPooling2D((tam_pooling, tam_pooling)),
-
-        # Transforma matriz de pesos em vetor.
-        tf.keras.layers.Flatten(),
-
-        # Camada de entrada com unção de ativação Relu.
-        tf.keras.layers.Dense(64, activation='relu'),
-        # Camada com 10 neurônios de saída representativos das classes.
-        tf.keras.layers.Dense(num_classes, activation='softmax')  # 10 classes de saída
+        tf.keras.layers.Dense(num_classes, activation='softmax')  # 1 camada de saida com 10 neuronios
     ])
 
-    # Compile o modelo
-    model.compile(optimizer='adam',
-                  loss='categorical_crossentropy',  # pode ser substituída pela esparse_categorical_cross_entropy
-                  metrics=['accuracy'])
-
-    model.summary()
+    model.compile('adam', loss='categorical_crossentropy', metrics=['accuracy'])
 
     return model
+
+
+# Treine o modelo
+start_time = time.time()
+model = get_mnist_network()
+model.fit(train_images, train_labels, epochs=10)
+end_time = time.time()
+
+training_time = end_time - start_time
+
+# Avalie o modelo no conjunto de teste
+test_loss, test_accuracy = model.evaluate(test_images, test_labels)
+print(f'Acurácia no conjunto de teste: {test_accuracy * 100:.2f}%')
+print(f'Tempo de treinamento: {training_time:.2f} segundos')

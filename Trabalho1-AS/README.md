@@ -1,5 +1,9 @@
 ### Trabalho 1: Aprendizado Supervisionado
 
+Coloque no seu Readme.md as características de cada dataset: quantas classes, quantas amostras
+e qual o tamanho das imagens (altura x largura x canais de cor). Para cada dataset, faça pelo menos
+5 testes com configurações diferentes e busque responder as seguintes questões
+
 1. Investigue e reflita sobre os fatores que tornam os problemas de classificação de cada
    dataset mais ou menos complexos em cada dataset. Pense em uma relação de ordem de
    complexidade/dificuldade dos datasets (os datasets em ordem dos menos complexos/difíceis para os
