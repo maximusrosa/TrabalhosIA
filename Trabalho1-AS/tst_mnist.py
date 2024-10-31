@@ -9,6 +9,7 @@ mnist = keras.datasets.mnist
 (train_images, train_labels), (test_images, test_labels) = mnist.load_data()
 num_classes = 10
 
+'''
 plt.figure(figsize=(20, 4))
 
 for i in range(num_classes):
@@ -29,6 +30,7 @@ for i in range(num_classes):
     ax.get_yaxis().set_visible(False)
     
 plt.show()
+'''
 
 # Converter para codificação one-hot dos labels
 # Classe1 = [1, 0, 0,...]; Classe2 = [0, 1, 0,...]
