@@ -1,7 +1,7 @@
-import time
 import tensorflow as tf
 from tensorflow import keras
 import matplotlib.pyplot as plt
+import time
 
 # Carregar o conjunto de dados CIFAR-100
 cifar100 = keras.datasets.cifar100
@@ -60,50 +60,59 @@ test_labels = tf.keras.utils.to_categorical(test_labels, num_classes=num_classes
 
 #Não é necessário se utilizar como função de custo esparse_categorical_cross_entropy
 
-# Crie o modelo de rede neural convolucional simples
+#######################################################################################################################
+
 def get_cifar100_network():
     # Atributos
     # Camada convolucional:
     num_filtros = 32
-    tam_filtro = 3
-    x_stride = 1
-    y_stride = 1
+    dim_filtro = 3
 
     # Max Pooling:
-    tam_pooling = 2
+    dim_pooling = 2
 
-    # Testar
-    # - stride igual ao tamanho do filtro (sem overlap)
-    # - stride maior que o tamanho do filtro (overlap)
-    # - maior tamanho da "área" de pooling (menos informação)
+    # Neurônios na 1º camada da MLP
+    neurons_in_layer = 64
 
     model = keras.Sequential([
-        # Camada convolucional 32 filtros 3x3.
+        # Camada convolucional (32 filtros 3x3)
         # Podemos mudar quantidade de filtros, tamanho do filtro é geralmente 3x3, o "stride" pode ser aumentado para agilizar a execução.
-        tf.keras.layers.Conv2D(num_filtros, (tam_filtro, tam_filtro), strides=(x_stride, y_stride), activation='relu', input_shape=(32, 32, 3)),
+        tf.keras.layers.Conv2D(num_filtros, (dim_filtro, dim_filtro), strides=(1, 1), activation='relu',
+                               input_shape=(32, 32, 3)),
+
+        tf.keras.layers.Conv2D(num_filtros, (dim_filtro, dim_filtro), strides=(1, 1), activation='relu',
+                               input_shape=(30, 30, 3)),
         #(32, 32, 3) porque as imagens são 32X32 e RGB, portanto, tendo 3 canais de cor
 
-        # Max Pooling 2x2.
+        # Max Pooling (2x2)
         # Podemos aumentar tamanho para agilizar execução, mas perdemos precisão.
-        tf.keras.layers.MaxPooling2D((tam_pooling, tam_pooling)),
+        tf.keras.layers.MaxPooling2D((dim_pooling, dim_pooling)),
+
+        tf.keras.layers.Conv2D(num_filtros, (dim_filtro, dim_filtro), strides=(1, 1), activation='relu',
+                               input_shape=(14, 14, 3)),
+
+        tf.keras.layers.MaxPooling2D((dim_pooling, dim_pooling)),
 
         # Transforma matriz de pesos em vetor.
         tf.keras.layers.Flatten(),
 
-        # Camada de entrada com unção de ativação Relu.
-        tf.keras.layers.Dense(128, activation='relu'),
+        # MLP (Porção totalmente conexa)
+        # Camada neurônios função de ativação Relu.
+        tf.keras.layers.Dense(neurons_in_layer, activation='relu'),
         # Camada com 10 neurônios de saída representativos das classes.
         tf.keras.layers.Dense(num_classes, activation='softmax')  # 10 classes de saída
     ])
 
     # Compile o modelo
     model.compile(optimizer='adam',
-                  loss='categorical_crossentropy',#pode ser substituída pela esparse_categorical_cross_entropy
+                  loss='categorical_crossentropy',  #pode ser substituída pela esparse_categorical_cross_entropy
                   metrics=['accuracy'])
 
     model.summary()
 
     return model
+
+#######################################################################################################################
 
 # Treine o modelo
 start_time = time.time()

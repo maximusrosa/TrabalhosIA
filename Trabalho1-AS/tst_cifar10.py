@@ -55,11 +55,6 @@ def get_cifar10_network():
     # Neurônios na 1º camada
     neurons_in_layer = 64
 
-    # Testar
-    # - stride igual ao tamanho do filtro (sem overlap)
-    # - stride maior que o tamanho do filtro (overlap)
-    # - maior tamanho da "área" de pooling (menos informação)
-
     model = keras.Sequential([
         # Camada convolucional (32 filtros 3x3)
         # Podemos mudar quantidade de filtros, tamanho do filtro é geralmente 3x3, o "stride" pode ser aumentado para agilizar a execução.
