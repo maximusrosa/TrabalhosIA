@@ -34,3 +34,7 @@
    pior, caso tenha ocorrido piora em relação a alguma performance já avaliada).
    Observação: Vocês podem explorar aspectos extras (normalização, decaimento de taxa de
    aprendizagem, outras operações nas redes convolucionais, etc).
+
+### Referências
+
+https://brains.dev/2022/modelos-de-regressao-regressao-linear/
