@@ -1,3 +1,24 @@
+# Trabalho de Regressão Linear e Redes Neurais
+
+## Integrantes do Grupo
+
+- **Artur Bernardo de Souza Santos** - Cartão de Matrícula: 334726 - Turma: A
+- **Nome do Integrante 2** - Cartão de Matrícula: XXXXXXX - Turma: A
+- **Nome do Integrante 3** - Cartão de Matrícula: XXXXXXX - Turma: A
+
+## Configurações da Regressão Linear
+
+### Valores Iniciais
+
+- **Intercepto (b):** 0
+- **Inclinação (w):** 0
+- **Taxa de Aprendizado (alpha):** 0.01
+- **Número de Iterações (num_iterations):** 1000
+
+### Resultados
+
+- **Melhor Erro Quadrático Médio (EQM):** EQM final: 8.529433040552066
+
 ### Trabalho 1: Aprendizado Supervisionado
 
 1. Investigue e reflita sobre os fatores que tornam os problemas de classificação de cada
@@ -8,13 +29,8 @@
    datasets em ordem de complexidade/dificuldade, seguido de uma hipótese de quais características
    do dataset influenciaram o seu ranking.
 
-
-
-
-
 2. Qual a maior acurácia obtida em cada dataset e quais mudanças (em termos de
    configurações da estrutura da rede ou outros hiper-parâmetros) fizeram a performance melhorar (ou
    pior, caso tenha ocorrido piora em relação a alguma performance já avaliada).
    Observação: Vocês podem explorar aspectos extras (normalização, decaimento de taxa de
    aprendizagem, outras operações nas redes convolucionais, etc).
- 
