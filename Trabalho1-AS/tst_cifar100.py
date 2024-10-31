@@ -1,3 +1,4 @@
+import time
 import tensorflow as tf
 from tensorflow import keras
 import matplotlib.pyplot as plt
@@ -90,7 +91,7 @@ def get_cifar100_network():
         tf.keras.layers.Flatten(),
 
         # Camada de entrada com unção de ativação Relu.
-        tf.keras.layers.Dense(64, activation='relu'),
+        tf.keras.layers.Dense(128, activation='relu'),
         # Camada com 10 neurônios de saída representativos das classes.
         tf.keras.layers.Dense(num_classes, activation='softmax')  # 10 classes de saída
     ])
@@ -103,3 +104,16 @@ def get_cifar100_network():
     model.summary()
 
     return model
+
+# Treine o modelo
+start_time = time.time()
+model = get_cifar100_network()
+model.fit(train_images, train_labels, epochs=10)
+end_time = time.time()
+
+training_time = end_time - start_time
+
+# Avalie o modelo no conjunto de teste
+test_loss, test_accuracy = model.evaluate(test_images, test_labels)
+print(f'Acurácia no conjunto de teste: {test_accuracy * 100:.2f}%')
+print(f'Tempo de treinamento: {training_time:.2f} segundos')
