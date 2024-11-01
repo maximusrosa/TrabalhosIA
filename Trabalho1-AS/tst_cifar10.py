@@ -11,9 +11,11 @@ cifar10 = keras.datasets.cifar10
 (train_images, train_labels), (test_images, test_labels) = cifar10.load_data()
 num_classes = 10
 
+'''
 # Defina as classes do CIFAR-10
 class_names = ['Avião', 'Automóvel', 'Pássaro', 'Gato', 'Cervo',
                'Cachorro', 'Sapo', 'Cavalo', 'Navio', 'Caminhão']
+
 
 # Crie um dicionário para mapear as classes para as imagens correspondentes
 class_to_image = {}
@@ -32,6 +34,7 @@ for i in range(10):
 
 plt.tight_layout()
 plt.show()
+'''
 
 # Converter para codificação one-hot dos labels
 # Classe1 = [1, 0, 0,...]; Classe2 = [0, 1, 0,...]
@@ -50,9 +53,9 @@ def get_cifar10_network():
     tam_filtro = 3
 
     # Max Pooling:
-    tam_pooling = 2
+    dim_max_pooling = 2
 
-    # Neurônios na 1º camada
+    # Neurônios na 1º camada do MLP
     neurons_in_layer = 64
 
     model = keras.Sequential([
@@ -67,12 +70,13 @@ def get_cifar10_network():
 
         # Max Pooling (2x2)
         # Podemos aumentar tamanho para agilizar execução, mas perdemos precisão.
-        tf.keras.layers.MaxPooling2D((tam_pooling, tam_pooling)),
+        tf.keras.layers.MaxPooling2D((dim_max_pooling, dim_max_pooling)),
 
         tf.keras.layers.Conv2D(num_filtros, (tam_filtro, tam_filtro), strides=(1, 1), activation='relu',
                                input_shape=(14, 14, 3)),
 
-        tf.keras.layers.MaxPooling2D((tam_pooling, tam_pooling)),
+
+        tf.keras.layers.MaxPooling2D((dim_max_pooling, dim_max_pooling)),
 
         # Transforma matriz de pesos em vetor.
         tf.keras.layers.Flatten(),
