@@ -20,8 +20,8 @@
 # value iteration.
 
 def question2():
-    answerDiscount = 0.9
-    answerNoise = 0.2
+    answerDiscount = 0.9  # Mantém o desconto padrão
+    answerNoise = 0.0    # Reduz o ruído para permitir movimentos determinísticos
     return answerDiscount, answerNoise
 
 if __name__ == '__main__':

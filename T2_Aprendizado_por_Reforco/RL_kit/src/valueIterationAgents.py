@@ -11,73 +11,109 @@
 # Student side autograding was added by Brad Miller, Nick Hay, and
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
-
 import mdp, util
 from learningAgents import ValueEstimationAgent
 
 class ValueIterationAgent(ValueEstimationAgent):
-    """
-        * Please read learningAgents.py before reading this.*
 
-        A ValueIterationAgent takes a Markov decision process
-        (see mdp.py) on initialization and runs value iteration
-        for a given number of iterations using the supplied
-        discount factor.
-    """
     def __init__(self, mdp, discount=0.9, iterations=100):
         """
-          Your value iteration agent should take an mdp on
-          construction, run the indicated number of iterations
-          and then act according to the resulting policy.
+        Inicializa o agente com o MDP, o fator de desconto e o número
+        de iterações. Também executa o algoritmo de Iteração de Valor.
 
-          Some useful mdp methods you will use:
-              mdp.getStates()
-              mdp.getPossibleActions(state)
-              mdp.getTransitionStatesAndProbs(state, action)
-              mdp.getReward(state, action, nextState)
-              mdp.isTerminal(state)
+        Parâmetros:
+        - mdp: um Markov Decision Process definido em mdp.py
+        - discount: fator de desconto (gamma), controla o peso futuro
+        - iterations: número de iterações do algoritmo de Iteração de Valor
+
+        Inicializa um dicionário (Counter) para armazenar os valores dos estados.
         """
-        self.mdp = mdp
-        self.discount = discount
-        self.iterations = iterations
-        self.values = util.Counter()  # A Counter is a dict with default 0
+        self.mdp = mdp  # O MDP fornecido
+        self.discount = discount  # Fator de desconto para valores futuros
+        self.iterations = iterations  # Número de iterações do algoritmo
+        self.values = util.Counter()  # Inicializa valores dos estados como 0
 
-        # Write value iteration code here
-        "*** YOUR CODE HERE ***"
-
+        # Executa Iteração de Valor para calcular valores ótimos
+        for _ in range(self.iterations):
+            new_values = util.Counter()  # Armazena os valores da iteração atual
+            for state in self.mdp.getStates():  # Itera sobre todos os estados do MDP
+                if self.mdp.isTerminal(state):  # Se o estado é terminal, continue
+                    continue
+                # Calcula o maior Q-value entre todas as ações possíveis
+                action_values = [
+                    self.computeQValueFromValues(state, action)
+                    for action in self.mdp.getPossibleActions(state)
+                ]
+                # Define o novo valor como o máximo dos Q-values
+                new_values[state] = max(action_values) if action_values else 0
+            # Atualiza os valores para a próxima iteração
+            self.values = new_values
 
     def getValue(self, state):
         """
-          Return the value of the state (computed in __init__).
-        """
+        Retorna o valor de um estado armazenado em self.values.
+S        """
         return self.values[state]
 
     def computeQValueFromValues(self, state, action):
         """
-          Compute the Q-value of action in state from the
-          value function stored in self.values.
+        Calcula o valor Q(s, a) com base nos valores armazenados em self.values.
+
+        Fórmula: Q(s, a) = Σ [P(s'|s,a) * (R(s,a,s') + γ * V(s'))]
+
+        Parâmetros:
+        - state: o estado atual
+        - action: a ação a ser executada a partir do estado
+
+        Retorna:
+        - O valor Q para o par (estado, ação).
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        q_value = 0  # Inicializa o Q-value como 0
+        for next_state, prob in self.mdp.getTransitionStatesAndProbs(state, action):
+            reward = self.mdp.getReward(state, action, next_state)  # Recompensa para a transição
+            # Soma ponderada da recompensa e valor do próximo estado
+            q_value += prob * (reward + self.discount * self.values[next_state])
+        return q_value
 
     def computeActionFromValues(self, state):
         """
-          The policy is the best action in the given state
-          according to the values currently stored in self.values.
+        Retorna a melhor ação a ser executada em um estado com base
+        nos valores armazenados em self.values.
 
-          You may break ties any way you see fit.  Note that if
-          there are no legal actions, which is the case at the
-          terminal state, you should return None.
+        Parâmetro:
+        - state: o estado atual
+
+        Retorna:
+        - A ação que maximiza o Q-value ou None se o estado for terminal.
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        if self.mdp.isTerminal(state):  # Se o estado é terminal, nenhuma ação é possível
+            return None
+
+        best_action = None
+        best_value = float('-inf')  # Inicializa o melhor valor como menos infinito
+        # Itera sobre todas as ações possíveis e calcula os Q-values
+        for action in self.mdp.getPossibleActions(state):
+            q_value = self.computeQValueFromValues(state, action)
+            # Atualiza a melhor ação se o Q-value for maior que o atual
+            if q_value > best_value:
+                best_value = q_value
+                best_action = action
+        return best_action
 
     def getPolicy(self, state):
+        """
+        Retorna a política (melhor ação) para um estado específico.
+        """
         return self.computeActionFromValues(state)
 
     def getAction(self, state):
-        "Returns the policy at the state (no exploration)."
+        """
+        Retorna a política no estado (nenhuma exploração é usada).
+        """
         return self.computeActionFromValues(state)
 
     def getQValue(self, state, action):
+        """
+        Retorna o Q-value calculado para um estado e uma ação.
+        """
         return self.computeQValueFromValues(state, action)
