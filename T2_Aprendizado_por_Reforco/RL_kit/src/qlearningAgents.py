@@ -197,11 +197,8 @@ class ApproximateQAgent(PacmanQAgent):
 
     def final(self, state):
         "Called at the end of each game."
-        # call the super-class final method
         PacmanQAgent.final(self, state)
 
-        # did we finish training?
         if self.episodesSoFar == self.numTraining:
-            # you might want to print your weights here for debugging
             print("Weights after training:", self.weights)
             pass
