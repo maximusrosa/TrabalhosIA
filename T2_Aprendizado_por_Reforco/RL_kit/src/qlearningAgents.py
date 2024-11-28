@@ -95,13 +95,13 @@ class QLearningAgent(ReinforcementAgent):
         """
         # Pick Action
         legalActions = self.getLegalActions(state)
-        action = None
 
         if not legalActions:
             return None
 
         if util.flipCoin(self.epsilon):
             action = random.choice(legalActions)
+            return action
         else:
             action = self.computeActionFromQValues(state)
             return action
