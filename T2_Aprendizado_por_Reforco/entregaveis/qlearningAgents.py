@@ -75,7 +75,6 @@ class QLearningAgent(ReinforcementAgent):
           you should return None.
         """
         legalActions = self.getLegalActions(state)
-
         if not legalActions:
             return None
 
@@ -100,15 +99,12 @@ class QLearningAgent(ReinforcementAgent):
         if not legalActions:
             return None
 
-        # With probability self.epsilon, we should take a random action
         if util.flipCoin(self.epsilon):
             action = random.choice(legalActions)
-
-        # Take the best policy action otherwise
+            return action
         else:
             action = self.computeActionFromQValues(state)
-
-        return action
+            return action
 
     def update(self, state, action, nextState, reward):
         """
@@ -202,8 +198,10 @@ class ApproximateQAgent(PacmanQAgent):
     def final(self, state):
         "Called at the end of each game."
 
+        # call the super-class final method
         PacmanQAgent.final(self, state)
 
+        # did we finish training?
         if self.episodesSoFar == self.numTraining:
             print("Weights after training:", self.weights)
             pass
