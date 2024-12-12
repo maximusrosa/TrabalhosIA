@@ -101,10 +101,21 @@ def expande(nodo: Nodo) -> Set[Nodo]:
     Recebe um nodo (objeto da classe Nodo) e retorna um conjunto de nodos.
     Cada nodo do conjunto é contém um estado sucessor do nó recebido.
     :param nodo: objeto da classe Nodo
-    :return:
+    :return: 
     """
-    # substituir a linha abaixo pelo seu codigo
-    raise NotImplementedError
+    sucessores = sucessor(nodo.estado)
+    novos_nodos = set()
+
+    for acao, novo_estado in sucessores:
+        novo_nodo = Nodo(
+            estado=novo_estado,
+            pai=nodo,
+            acao=acao,
+            custo=nodo.custo + 1
+        )
+        novos_nodos.add(novo_nodo)
+
+    return novos_nodos
 
 
 def astar_hamming(estado: str) -> list[str]:
