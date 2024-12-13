@@ -89,3 +89,4 @@ Implementação do algoritmo minimax com poda alfa-beta para jogos de tabuleiro 
 - **Maximus Borges da Rosa** - [@maximusrosa](https://github.com/maximusrosa)
 
 ---
+

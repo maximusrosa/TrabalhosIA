@@ -154,7 +154,7 @@ def hamming_dist(estado: str):
 
 def manhattan_dist(estado: str):
     """
-    Função para calcular a distância de Hamming de um estado para o objetivo.
+    Função para calcular a distância de Manhattan de um estado para o objetivo.
     :param estado:
     :return: int
     """
@@ -186,7 +186,7 @@ def reconstrucao_caminho(nodo):
         nodo = nodo.pai
     return list(reversed(caminho))
 
-def busca_grafo(estado_inicial: str, heuristica) -> list[str]:
+def busca_grafo(estado_inicial: str, heuristica: function) -> list[str]:
     """
     Função para construir a árvore de busca e encontrar o caminho até o objetivo.
     :param estad_inicial: str
