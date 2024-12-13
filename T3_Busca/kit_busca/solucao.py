@@ -41,7 +41,7 @@ class Nodo:
         Retorna o hash do objeto
         :return: int
         """
-        return hash((self.estado, self.pai, self.acao, self.custo))
+        return hash(self.estado)
 
 def sucessor(estado: str) -> Set[Tuple[str, str]]:
     """
@@ -185,7 +185,7 @@ def reconstrucao_caminho(nodo):
         nodo = nodo.pai
     return list(reversed(caminho))
 
-def busca_grafo(estado_inicial, heuristica):
+def busca_grafo(estado_inicial: str, heuristica) -> list[str]:
     """
     Função para construir a árvore de busca e encontrar o caminho até o objetivo.
     :param estad_inicial: str
@@ -247,54 +247,125 @@ def astar_manhattan(estado: str) -> list[str]:
 
 
 #opcional,extra
-def bfs(estado: str) -> list[str]:
+def bfs(estado_inicial: str) -> list[str]:
     """
     Recebe um estado (string), executa a busca em LARGURA e
     retorna uma lista de ações que leva do
     estado recebido até o objetivo ("12345678_").
     Caso não haja solução a partir do estado recebido, retorna None
     :param estado: str
-    :return:
+    :return: str list
     """
-    # substituir a linha abaixo pelo seu codigo
-    raise NotImplementedError
+    # Verifica se estado inicial já é o estado objetivo.
+    if estado_inicial == "12345678_":
+        return []
 
+    # Cria nodo raiz
+    nodo_inicial = Nodo(estado_inicial, None, None, 0, 0)
+    fronteira = [nodo_inicial]
+    explorados = set()
+
+    while fronteira:
+        # Nodo da fronteira é movido para nodo_atual.
+        nodo_atual = fronteira.pop(0)
+
+        # Verifica se o estado do nodo atual é o objetivo.
+        # Se for retrocede ao longo do caminho percorrido e retorna a lista de ações para a solução objetivo.
+        if nodo_atual.estado == "12345678_":
+            return reconstrucao_caminho(nodo_atual)
+        
+        # Se o estado do nodo atual não é o objetivo, adiciona o estado do nodo atual ao conjunto de explorados.
+        if nodo_atual.estado not in explorados:
+            explorados.add(nodo_atual.estado)
+            # Em seguida, expande o nodo atual e adiciona seus filhos à fronteira.
+            for filho in expande(nodo_atual):
+                if filho.estado not in explorados:
+                    fronteira.append(filho)
+
+    # Se a fronteira está vazia e nenhuma solução foi encontrada, retorna None.
+    return None
 
 #opcional,extra
-def dfs(estado: str) -> list[str]:
+def dfs(estado_inicial: str) -> list[str]:
     """
     Recebe um estado (string), executa a busca em PROFUNDIDADE e
     retorna uma lista de ações que leva do
     estado recebido até o objetivo ("12345678_").
     Caso não haja solução a partir do estado recebido, retorna None
     :param estado: str
-    :return:
+    :return: str list
     """
-    # substituir a linha abaixo pelo seu codigo
-    raise NotImplementedError
+    # Verifica se estado inicial já é o estado objetivo.
+    if estado_inicial == "12345678_":
+        return []
+
+    # Cria nodo raiz
+    nodo_inicial = Nodo(estado_inicial, None, None, 0, 0)
+    fronteira = [nodo_inicial]
+    explorados = set()
+
+    while fronteira:
+        # Nodo da fronteira é movido para nodo_atual.
+        nodo_atual = fronteira.pop()
+
+        # Verifica se o estado do nodo atual é o objetivo.
+        # Se for retrocede ao longo do caminho percorrido e retorna a lista de ações para a solução objetivo.
+        if nodo_atual.estado == "12345678_":
+            return reconstrucao_caminho(nodo_atual)
+        
+        # Se o estado do nodo atual não é o objetivo, adiciona o estado do nodo atual ao conjunto de explorados.
+        if nodo_atual.estado not in explorados:
+            explorados.add(nodo_atual.estado)
+            # Em seguida, expande o nodo atual e adiciona seus filhos à fronteira.
+            for filho in expande(nodo_atual):
+                if filho.estado not in explorados:
+                    fronteira.append(filho)
+
+    # Se a fronteira está vazia e nenhuma solução foi encontrada, retorna None.
+    return None
 
 
 #opcional,extra
-def astar_new_heuristic(estado: str) -> list[str]:
+def n_swap_dist(estado: str) -> int:
+    """
+    Função para calcular a heurística n-Swap de um estado para o objetivo.
+    :param estado: str
+    :return: int
+    """
+    objetivo = "12345678_"
+    posicoes_erradas = 0
+
+    # Conta número de peças fora do lugar
+    for i, char in enumerate(estado):
+        if char != '_' and char != objetivo[i]:
+            posicoes_erradas += 1
+
+    return posicoes_erradas
+
+def astar_n_swap(estado: str) -> list[str]:
     """
     Recebe um estado (string), executa a busca A* com h(n) = sua nova heurística e
-    retorna uma lista de ações que leva do
-    estado recebido até o objetivo ("12345678_").
-    Caso não haja solução a partir do estado recebido, retorna None
+    retorna uma lista de ações que leva do estado recebido até o objetivo ("12345678_").
+    Caso não haja solução a partir do estado recebido, retorna None.
+    A heurística n-Swap é o número de peças fora do lugar.
     :param estado: str
-    :return:
+    :return: str list
     """
-    # substituir a linha abaixo pelo seu codigo
-    raise NotImplementedError
 
-# Exemplo de uso
-estado_inicial = "2_3541687"
+    return busca_grafo(estado, n_swap_dist)
+    
+
+# Métodos auxiliares
+#estado_inicial = "2_3541687"
 #h = manhatam_dist(estado_inicial)
 #print(h)
 #print("Estado Inicial: " + estado_inicial)
 #geraArvore(estado_inicial, 3)
 
 # Exemplo de uso
-estado_inicial = "2_3541687"
-print("A* com Hamming:", astar_hamming(estado_inicial))
-print("A* com Manhattan:", astar_manhattan(estado_inicial))
+estado_inicial = "18246753_"
+print("A* com Hamming:", len(astar_hamming(estado_inicial)), '\n', astar_hamming(estado_inicial))
+print("A* com Manhattan:", len(astar_manhattan(estado_inicial)), '\n', astar_manhattan(estado_inicial))
+#print("BFS:", len(bfs(estado_inicial)), '\n', bfs(estado_inicial))
+#print("DFS:", len(dfs(estado_inicial)), '\n', dfs(estado_inicial))
+print("A* com nova heurística N-Swap:", len(astar_n_swap(estado_inicial)), '\n', astar_n_swap(estado_inicial))
