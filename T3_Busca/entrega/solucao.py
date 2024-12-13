@@ -186,7 +186,7 @@ def reconstrucao_caminho(nodo):
         nodo = nodo.pai
     return list(reversed(caminho))
 
-def busca_grafo(estado_inicial: str, heuristica: function) -> list[str]:
+def busca_grafo(estado_inicial: str, heuristica) -> list[str]:
     """
     Função para construir a árvore de busca e encontrar o caminho até o objetivo.
     :param estad_inicial: str
