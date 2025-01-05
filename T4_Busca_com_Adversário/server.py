@@ -7,14 +7,16 @@ import xml.dom.minidom
 
 import advsearch.timer as timer
 
-def player_name(player_dir:str) -> str:
+
+def player_name(player_dir: str) -> str:
     """
     Removes leading 'advsearch.' or 'advsearch/' from the player directory
     :param player_dir:
     :return:
     """
     if player_dir.startswith('advsearch'):
-        return player_dir[len('advsearch')+1:]  # +1 to account for the / or .
+        return player_dir[len('advsearch') + 1:]  # +1 to account for the / or .
+
 
 class Server(object):
     """
@@ -38,12 +40,11 @@ class Server(object):
             raise ValueError(f"Unknown game type '{game_type}'. Allowed types are othello' and 'tttm'")
 
         if game_type == 'othello':
-            from advsearch.othello.board import Board 
+            from advsearch.othello.board import Board
             from advsearch.othello.gamestate import GameState
         else:
             from advsearch.tttm.board import Board
             from advsearch.tttm.gamestate import GameState
-
 
         # normalizes paths to avoid errors with trailing slashes
         p1_agent = os.path.normpath(p1_agent)
@@ -78,7 +79,7 @@ class Server(object):
         # replaces / or \ with . and removes .py extension for both agentes
         p1_agent, p2_agent = p1_agent.replace(os.sep, '.'), p2_agent.replace(os.sep, '.')
         p1_agent, p2_agent = os.path.splitext(p1_agent)[0], os.path.splitext(p2_agent)[0]
-        
+
         self.player_modules = {
             'B': importlib.import_module(p1_agent),
             'W': importlib.import_module(p2_agent),
@@ -103,8 +104,8 @@ class Server(object):
 
             # calculates scores
             if self.state.game_name == 'Othello':
-                p1_score = self.state.board.num_pieces('B') 
-                p2_score = self.state.board.num_pieces('W') 
+                p1_score = self.state.board.num_pieces('B')
+                p2_score = self.state.board.num_pieces('W')
             else:
                 winner = self.state.winner()
                 p1_score = 1 if winner == 'B' else -1 if winner == 'W' else 0
@@ -129,10 +130,11 @@ class Server(object):
                 self.result = 0 if p1_score > p2_score else 1 if p2_score > p1_score else 2
                 self.finish = time.localtime()
                 return self.result
-            
+
             # disqualify player if it attempts illegal moves 5 times in a row
             if illegal_count[current_player] >= 5:
-                print(f'Player {current_player} ({self.player_dirs[current_player]}) DISQUALIFIED! Too many illegal move attempts.')
+                print(
+                    f'Player {current_player} ({self.player_dirs[current_player]}) DISQUALIFIED! Too many illegal move attempts.')
                 print('End of game reached!')
                 print('Player 1 (B): %d' % p1_score)
                 print('Player 2 (W): %d' % p2_score)
@@ -143,7 +145,8 @@ class Server(object):
 
             # if this player is moving twice, shows a message that the opponent has no legal moves
             if self.last_player == current_player:
-                print(f'Player {opponent} ({self.player_dirs[opponent]}) has no legal moves. {self.player_dirs[current_player]} will play again')
+                print(
+                    f'Player {opponent} ({self.player_dirs[opponent]}) has no legal moves. {self.player_dirs[current_player]} will play again')
                 time.sleep(self.pace)
 
             # creates a copy of the state, so that player can do whathever it wants
@@ -151,11 +154,12 @@ class Server(object):
 
             # calls current player's make_move function with the specified timeout
             start = time.time()
-            function_call = timer.FunctionTimer(self.player_modules[current_player].make_move, (state_copy,))  # argument must be a 1-element tuple
-            
+            function_call = timer.FunctionTimer(self.player_modules[current_player].make_move,
+                                                (state_copy,))  # argument must be a 1-element tuple
+
             delay = 60 if player_name(self.player_dirs[current_player]) == "humanplayer" else self.delay
             move = function_call.run(delay)
-                
+
             elapsed = time.time() - start
 
             if move is None:  # detects timeout
@@ -165,22 +169,21 @@ class Server(object):
 
             move_x, move_y = move
 
-             # checks for move validity
+            # checks for move validity
             if not isinstance(move_x, int) or not isinstance(move_y, int):
                 print(f'ILLEGAL MOVE! x, y are {type(move_x)}, {type(move_y)} but should be integer!')
                 move_x = move_y = -1  # -1 is my code for type error
                 #illegal_count[current_player] += 1
 
-
             # saves move in history
             self.history_file.write('%d,%d,%s\n' % (move_x, move_y, current_player))
             self.history.append(((move_x, move_y), current_player))
 
-            if self.state.is_legal_move(move):   
+            if self.state.is_legal_move(move):
                 print('Player %s move %d,%d accepted.' % (current_player, move_x, move_y))
-            
-                self.last_player = current_player           # records the player that just moved
-                self.state = self.state.next_state(move)  
+
+                self.last_player = current_player  # records the player that just moved
+                self.state = self.state.next_state(move)
 
             else:
                 print(f'Player {current_player} move {move}_ILLEGAL!')
@@ -194,7 +197,6 @@ class Server(object):
             print(self.state.board.decorated_str(
                 colors=False, move=(move_y, move_x), highlight_flipped=True
             ))
-
 
     def write_output(self):
         """
@@ -214,14 +216,14 @@ class Server(object):
 
         if self.state.game_name == 'Othello':
             scores = {
-                'B': self.state.board.piece_count['B'], 
+                'B': self.state.board.piece_count['B'],
                 'W': self.state.board.piece_count['W']
             }
         else:
             winner = self.state.winner()
             scores = {
-                'B': 1 if winner == 'B' else -1 if winner == 'W' else 0, 
-                'W': -1 if winner == 'B' else 1 if winner == 'W' else 0, 
+                'B': 1 if winner == 'B' else -1 if winner == 'W' else 0,
+                'W': -1 if winner == 'B' else 1 if winner == 'W' else 0,
             }
 
         for color in colors:
@@ -229,7 +231,8 @@ class Server(object):
             elem.set('directory', self.player_dirs[color])
             elem.set('color', color)
             opp_color = 'W' if color == 'B' else 'B'
-            result = 'win' if scores[color] > scores[opp_color] else 'loss' if scores[color] < scores[opp_color] else 'draw'
+            result = 'win' if scores[color] > scores[opp_color] else 'loss' if scores[color] < scores[
+                opp_color] else 'draw'
             elem.set('result', result)
             elem.set('score', str(scores[color]))
 
