@@ -1,30 +1,37 @@
-import random
 from typing import Tuple
 from ..othello.gamestate import GameState
-from ..othello.board import Board
+from .minimax import minimax_move
+from .evaluate import evaluate_custom  # Certifique-se de implementar esta heurística em um módulo auxiliar.
+import time
+import logging
 
-# Voce pode criar funcoes auxiliares neste arquivo
-# e tambem modulos auxiliares neste pacote.
-#
-# Nao esqueca de renomear 'your_agent' com o nome
-# do seu agente.
+logging.basicConfig(level=logging.INFO)
 
-
-def make_move(state) -> Tuple[int, int]:
+def make_move(state: GameState) -> Tuple[int, int]:
     """
-    Returns a move for the given game state. 
-    Consider that this will be called in the Othello tournament situation,
-    so you should call the best implementation you got.
-
-    :param state: state to make the move
-    :return: (int, int) tuple with x, y coordinates of the move (remember: 0 is the first row/column)
+    Decide a jogada no Othello utilizando poda alfa-beta com controle de tempo.
+    
+    :param state: estado atual do jogo (instância de GameState)
+    :return: (int, int) coordenadas da jogada (x, y)
     """
+    max_time = 5  # Limite de tempo em segundos
+    start_time = time.time()
+    best_move = None
+    depth = 1
 
-    # o codigo abaixo apenas retorna um movimento aleatorio valido para
-    # a primeira jogada 
-    # Remova-o e coloque a sua implementacao da poda alpha-beta
+    # Iterative deepening para respeitar o limite de tempo
+    while time.time() - start_time < max_time:
+        try:
+            logging.info(f"Iniciando busca com profundidade {depth}")
+            best_move = minimax_move(state, depth, evaluate_custom)
+            depth += 1
+        except TimeoutError:
+            logging.warning("Tempo excedido durante a busca.")
+            break
 
-    if state.game_name == 'Othello':
-        return random.choice([(2, 3), (4, 5), (5, 4), (3, 2)])
+    if best_move is None:
+        logging.warning("Nenhuma jogada encontrada. Escolhendo movimento aleatório.")
+        return random.choice(state.legal_moves())
 
-
+    logging.info(f"Melhor movimento escolhido: {best_move}")
+    return best_move
