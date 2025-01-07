@@ -1,7 +1,7 @@
 from typing import Tuple
 from ..othello.gamestate import GameState
 from .minimax import minimax_move
-from .evaluate import evaluate_custom  # Certifique-se de implementar esta heurística em um módulo auxiliar.
+from .evaluate import evaluate_custom  
 import time
 import logging
 
