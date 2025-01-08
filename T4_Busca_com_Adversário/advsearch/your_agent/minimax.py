@@ -5,11 +5,7 @@ from typing import Tuple, Callable
 logging.basicConfig(level=logging.INFO)
 
 def max_value(state, player, alpha, beta, depth, max_depth, eval_func) -> float:
-    """
-    Função de maximização com poda alfa-beta.
-    Retorna o melhor valor avaliado para o estado atual.
-    """
-    if state.is_terminal() or depth == max_depth:
+    if state.is_terminal() or (max_depth != -1 and depth == max_depth):
         score = eval_func(state, player)
         logging.debug(f"[MAX] Avaliando estado terminal ou limite: {score}")
         return score
@@ -26,11 +22,7 @@ def max_value(state, player, alpha, beta, depth, max_depth, eval_func) -> float:
 
 
 def min_value(state, player, alpha, beta, depth, max_depth, eval_func) -> float:
-    """
-    Função de minimização com poda alfa-beta.
-    Retorna o melhor valor avaliado para o estado atual.
-    """
-    if state.is_terminal() or depth == max_depth:
+    if state.is_terminal() or (max_depth != -1 and depth == max_depth):
         score = eval_func(state, player)
         logging.debug(f"[MIN] Avaliando estado terminal ou limite: {score}")
         return score
@@ -47,14 +39,6 @@ def min_value(state, player, alpha, beta, depth, max_depth, eval_func) -> float:
 
 
 def minimax_move(state, max_depth: int, eval_func: Callable) -> Tuple[int, int]:
-    """
-    Calcula o melhor movimento usando o algoritmo Minimax com poda alfa-beta.
-    
-    :param state: O estado atual do jogo.
-    :param max_depth: A profundidade máxima a explorar.
-    :param eval_func: Função de avaliação para calcular o valor do estado.
-    :return: Coordenadas do melhor movimento.
-    """
     best_move = None
     best_value = float("-inf")
     alpha = float("-inf")
@@ -63,7 +47,12 @@ def minimax_move(state, max_depth: int, eval_func: Callable) -> Tuple[int, int]:
 
     logging.info(f"Iniciando minimax para jogador {player} com profundidade máxima {max_depth}")
 
-    for move in state.legal_moves():
+    legal_moves = state.legal_moves()
+    if not legal_moves:
+        logging.warning("Nenhum movimento válido encontrado. Retornando movimento aleatório.")
+        return random.choice(state.legal_moves())
+
+    for move in legal_moves:
         next_state = state.next_state(move)
         move_value = min_value(next_state, player, alpha, beta, 1, max_depth, eval_func)
         logging.debug(f"Movimento {move} avaliado com valor {move_value}")
@@ -73,10 +62,6 @@ def minimax_move(state, max_depth: int, eval_func: Callable) -> Tuple[int, int]:
             best_move = move
 
         alpha = max(alpha, best_value)
-
-    if best_move is None:
-        logging.warning("Nenhum movimento encontrado. Retornando movimento aleatório.")
-        return random.choice(state.legal_moves())
 
     logging.info(f"Melhor movimento encontrado: {best_move} com valor {best_value}")
     return best_move

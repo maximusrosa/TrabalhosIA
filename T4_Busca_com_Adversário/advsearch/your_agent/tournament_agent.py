@@ -1,15 +1,16 @@
 from typing import Tuple
 from ..othello.gamestate import GameState
 from .minimax import minimax_move
-from .evaluate import evaluate_custom  
+from .othello_minimax_mask import evaluate_mask  # Importando evaluate_mask
 import time
 import logging
+import random
 
 logging.basicConfig(level=logging.INFO)
 
 def make_move(state: GameState) -> Tuple[int, int]:
     """
-    Decide a jogada no Othello utilizando poda alfa-beta com controle de tempo.
+    Decide a jogada no Othello utilizando poda alfa-beta com controle de tempo e avaliação com máscara.
     
     :param state: estado atual do jogo (instância de GameState)
     :return: (int, int) coordenadas da jogada (x, y)
@@ -23,7 +24,7 @@ def make_move(state: GameState) -> Tuple[int, int]:
     while time.time() - start_time < max_time:
         try:
             logging.info(f"Iniciando busca com profundidade {depth}")
-            best_move = minimax_move(state, depth, evaluate_custom)
+            best_move = minimax_move(state, depth, evaluate_mask)  # Utilizando evaluate_mask
             depth += 1
         except TimeoutError:
             logging.warning("Tempo excedido durante a busca.")
