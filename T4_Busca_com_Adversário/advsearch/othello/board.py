@@ -1,3 +1,5 @@
+from typing import Tuple
+
 def from_file(path_to_file):
     """
     Generates a board from the string representation
@@ -431,3 +433,9 @@ class Board(object):
             string += '%s\n' % ''.join(row)
 
         return string
+
+    def get_last_move(self) -> Tuple[int, int]:
+        """
+        Retorna a última jogada realizada no tabuleiro.
+        """
+        return self.last_move

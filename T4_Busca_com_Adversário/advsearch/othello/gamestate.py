@@ -11,7 +11,7 @@ class GameState(object):
 
     game_name = "Othello"
 
-    def __init__(self, board:Board, player:str) -> None:
+    def __init__(self, board:Board, player:str, last_action: Tuple[int, int] = None) -> None:
         """
         Initializes the Game state with the given board and player to move.
         You can access the attributes self.board and self.player directly for convenience.
@@ -21,6 +21,7 @@ class GameState(object):
         """
         self.board = board
         self.player = player
+        self.last_action = last_action
 
     def is_terminal(self) -> bool:
         """
@@ -81,6 +82,12 @@ class GameState(object):
         elif next_board.has_legal_move(self.player):
             next_player = self.player
 
-        next_state = GameState(next_board, next_player)
+        next_state = GameState(next_board, next_player, last_action=move)
 
         return next_state
+
+    def get_last_action(self) -> Tuple[int, int]:
+        """
+        Retorna a última ação realizada para chegar a este estado.
+        """
+        return self.last_action

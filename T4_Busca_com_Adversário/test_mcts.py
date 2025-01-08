@@ -96,12 +96,13 @@ class GameState:
     """
     game_name = "Abstract Game"
 
-    def __init__(self, board: Board, player: str, game_tree=very_simple_game_tree, terminals=very_simple_game_terminals, visit_count=very_simple_game_visits):
+    def __init__(self, board: Board, player: str, game_tree=very_simple_game_tree, terminals=very_simple_game_terminals, visit_count=very_simple_game_visits, last_action: Tuple[int, int] = None):
         self.board = board
         self.player = player
         self.game_tree = game_tree
         self.terminals = terminals
         self.visit_count = visit_count
+        self.last_action = last_action
 
     def is_terminal(self) -> bool:
         return self.board.board in self.terminals
@@ -129,7 +130,7 @@ class GameState:
         return self.board
 
     def copy(self) -> 'GameState':
-        new_state = GameState(self.board.copy(), self.player, self.game_tree, self.terminals, self.visit_count)
+        new_state = GameState(self.board.copy(), self.player, self.game_tree, self.terminals, self.visit_count, self.last_action)
         return new_state
 
     def next_state(self, move: Tuple[int, int]) -> 'GameState':
@@ -143,7 +144,14 @@ class GameState:
         # Toggle the player for the next move
         new_state.player = 'B' if self.player == 'W' else 'W'
         self.visit_count[new_state.board.board] += 1
+        new_state.last_action = move
         return new_state
+
+    def get_last_action(self) -> Tuple[int, int]:
+        """
+        Retorna a última ação realizada para chegar a este estado.
+        """
+        return self.last_action
     
 
 
